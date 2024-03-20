@@ -16,7 +16,8 @@ class MatMath:
         Returns the 2-D shearing matrix (TS) and a 3-D matrix (dims=(x,y,t))
         of the shifted mask pattern corresponding to each frame in the
         image sequence
-        Creates a random mask if only nx is provided but not mask
+        Creates a random mask if only nx is provided and mask is left as NoneType
+        
         Inputs:
         nt: int = number of timesteps (e.g., nt = 100 ps/10 ps = 10 frames)
         nx (default = None): int = shape of the image frame (e.g., 200x200 pixels)
@@ -24,6 +25,7 @@ class MatMath:
         comp_view: bool = whether or not both reflections (+/- 12 deg) are captured from DMD
         mask (default = None): array, int = random encoding pattern
         -- if None provided, will create a random mask with shape (nx,nx)
+        
         '''
 
         ndim = 2 if comp_view else 1
@@ -32,10 +34,12 @@ class MatMath:
         mask = np.round(np.random.random((nx,nx))) if mask is None else mask #2-D encoding mask pattern on DMD
         masks= np.zeros((nx*ndim,nyt,nt)) #empty 3-D array for 2-D mask on streaked image for each frame of image sequence
 
-        # 2-D array of masks with column and time dimensions flattened
-        ## dok_matrix (dicitonary of keys) is an efficient tool
-        ## that allows large 2-D matrix to be stored in RAM for computation
-        ## matrix operations using TS are essential to reconstructing large datasets
+        '''
+        2-D array of masks with column and time dimensions flattened
+        dok_matrix (dicitonary of keys) is an efficient tool
+        that allows large 2-D matrix to be stored in RAM for computation
+        matrix operations using TS are essential to reconstructing large datasets
+        '''
         TS = dok_matrix((nx*nyt*ndim,(nx*nyt)*nt)) 
         for i in tqdm(range(nt),'Creating masked sampling matrix (TS)'):
             masks[:nx,i:nx+i,i]=mask
@@ -144,8 +148,8 @@ class Solver:
         y1=np.zeros(x.shape)#(nt,nx,nyt)
         v=np.copy(x)#(nt,nx,nyt)
 
-        # initialization, project streak image to frame sequence using
-        ## transpose of time-shearing matrix (At*y=TS.T@y) to create initial frame series
+        ''' initialization, project streak image to frame sequence using
+        transpose of time-shearing matrix (At*y=TS.T@y) to create initial frame series '''
         for it in tqdm(range(cls.iter_max),'Solving for reconstruction'):
             v1=x+y1 #(nt,nx,nyt)
             yb = cls.A(v1,cls.TS,cls.nx,cls.nt,cls.ndim) #project frames onto streak camera (TS*x = TS@x)
