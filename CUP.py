@@ -98,7 +98,7 @@ class Solver:
     @classmethod
     def Reconstruct(cls,meas,TS,mask_sum,comp_view=True,**kwargs):
         '''
-        Calls the generalized alternating projection (GAP) denoiser to reconstruct
+        Calls the iterative algorithm reported in [arXiv:1511.03890v1] to reconstruct
         a series of frames from an encoded, streaked image
        
         Parameters
@@ -130,6 +130,7 @@ class Solver:
     @classmethod
     def GAP_denoise(cls,**kwargs):
         '''
+        Generalized alternating projection (GAP) denoiser
         GAP is a forward-backward solver that uses the adjoint model (At)
         to project the 2-D streak measurement to a 3-D array (nt,nx,nx) that
         is subsequently passed into a total variation (TV) denoiser to identify
