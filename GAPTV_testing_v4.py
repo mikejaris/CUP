@@ -118,7 +118,7 @@ vgaptv = admmdenoise_cacti(meas, masks, A, At, MAXB=MAXB,_lambda=_lambda, accele
 #     ax[2].cla()
 #     ax[0].imshow(Z[i],vmin=0,vmax=Z.max())
 #     ax[1].imshow(vgaptv[i,:,i:nx+i],vmin=0,vmax=vgaptv.max())
-#     tmpa=vgaptv[i,:,i:nx+i]
+    # tmpa=vgaptv[i,:,i:nx+i]
 #     tmpb=Z[i]
 #     tmpa[tmpa<.001]=0
 #     tmpa=tmpa/tmpa.max()
