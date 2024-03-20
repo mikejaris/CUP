@@ -5,8 +5,6 @@ Created on Wed Mar 20 00:30:42 2024
 @author: mikej
 """
 
-import sys
-sys.path.append(r'C:\Users\mikej\Documents\GitHub\CUP')
 from CUP import Solver, MatMath
 import numpy as np
 import matplotlib.pyplot as plt
