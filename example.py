@@ -12,9 +12,11 @@ import matplotlib.pyplot as plt
 # =============================================================================
 # Frame dimensions (nx x nx) and number of frames (nt)
 # =============================================================================
-nx=50
-nt=24
+nx=50 #pixel size of the images
+nt=24 #number of frames
 nyt=nx+nt #length of rows of streaked image
+comp_view = True # whether or not both DMD projections are captured
+ndim = 2 if comp_view else 1 #changes size of TS depending on comp_view
 
 # =============================================================================
 # load dynamic scene (nt,nx,nx) and simulate streaked image (nt,nx,nyt)
@@ -34,7 +36,7 @@ for i in range(nt):
 # initialize solver parameters and create sampling matrices
 # =============================================================================
 s = Solver(lam=1,accelerate=False,iter_max=40)
-TS,masks = MatMath.Create_Mask(nt=nt,nx=nx) #create mask for simulation
+TS,masks = MatMath.Create_Mask(nt=nt,nx=nx,comp_view=comp_view) #create mask for simulation
 # mask = np.round(np.random.random((nx,nx))) #if mask is known
 # TS,masks = MatMath.Create_Mask(nt=nt,mask=mask)
 mask_sum = np.sum(masks**2,axis=2)
@@ -43,7 +45,7 @@ mask_sum = np.sum(masks**2,axis=2)
 # =============================================================================
 # (simulation) project the frames on to the streak camera with the mask encoding pattern
 # =============================================================================
-meas = s.A(imgs,TS,nx,nt,2) #(TS@imgs.reshape((nt,nx*nyt)).flatten())
+meas = s.A(imgs,TS,nx,nt,ndim) #(TS@imgs.reshape((nt,nx*nyt)).flatten())
 
 # =============================================================================
 # digitize the data to 16-bit values and normalize the data
@@ -56,7 +58,7 @@ meas/=MAXB
 # =============================================================================
 # call the reconstruction algorithm to solve for the frames
 # =============================================================================
-tst=s.Reconstruct(meas,TS,mask_sum)
+tst=s.Reconstruct(meas,TS,mask_sum,comp_view=comp_view)
 
 # =============================================================================
 # visualize the reconstructed output frames
